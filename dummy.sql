@@ -19,11 +19,11 @@ VALUES
     (3, '2024-02-15', '13:00:00', '15:00:00', 4);
 
 -- cinema 테이블에 더미 데이터 추가
-INSERT INTO cinema (cinema_id, cinema_name, cinema_location, parking_info, cinema_phone)
+INSERT INTO cinema (cinema_id, cinema_name, cinema_location, cinema_phone)
 VALUES 
-    (1, '메가박스 강남', '서울특별시 강남구 강남대로 100', '주차 가능', '02-1234-5678'),
-    (2, 'CGV 명동', '서울특별시 중구 명동길 50', '주차 가능', '02-9876-5432'),
-    (3, '롯데시네마 홍대', '서울특별시 마포구 와우산로 123', '주차 가능', '02-1111-2222');
+    (1, '메가박스 강남', '서울특별시 강남구 강남대로 100', '02-1234-5678'),
+    (2, 'CGV 명동', '서울특별시 중구 명동길 50', '02-9876-5432'),
+    (3, '롯데시네마 홍대', '서울특별시 마포구 와우산로 123', '02-1111-2222');
 
 -- theater 테이블에 더미 데이터 추가
 INSERT INTO theater (theater_id, cinema_id, theater_no, theater_type)
