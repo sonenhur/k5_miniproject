@@ -7,7 +7,7 @@ CREATE TABLE movie(
     genre VARCHAR(50),
     synopsis VARCHAR(2000),
     director VARCHAR(50),
-    cast VARCHAR(100)	
+    casts VARCHAR(100)	
 );
 
 CREATE TABLE member( 
@@ -78,9 +78,6 @@ CREATE TABLE payment(
     ticket_cd INT,
     payment_date DATE,
     payment_method VARCHAR(50),
-    card_number VARCHAR(16),
-    expiration_date DATE,
-    cvv VARCHAR(3),
-    amount DECIMAL(10,2),
+    amount INT,
     FOREIGN KEY(ticket_cd) REFERENCES ticketing(ticket_cd)
 );
