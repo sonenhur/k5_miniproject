@@ -24,7 +24,6 @@ CREATE TABLE member(
     mem_address VARCHAR(100),
     mem_phone VARCHAR(12),
     join_date DATE,
-    mem_salt VARCHAR(250)
 );
 
 CREATE TABLE review( 
