@@ -45,22 +45,22 @@ CREATE TABLE seat(
 
 
 CREATE TABLE member( 
-    mem_id VARCHAR(50) PRIMARY KEY,
-    mem_pw VARCHAR(2000),
-    mem_birth DATE,
-    mem_address VARCHAR(100),
-    mem_phone VARCHAR(15),
+    member_id VARCHAR(50) PRIMARY KEY,
+    member_pw VARCHAR(2000),
+    member_birth DATE,
+    member_address VARCHAR(100),
+    member_phone VARCHAR(15),
     join_date DATE
 );
 
 CREATE TABLE ticketing( 
     ticket_id INT AUTO_INCREMENT PRIMARY KEY,
-    mem_id VARCHAR(50),
+    member_id VARCHAR(50),
     adult INT,
     teenager INT,
     child INT,
     screening_id INT,
-    FOREIGN KEY(mem_id) REFERENCES member(mem_id),
+    FOREIGN KEY(member_id) REFERENCES member(member_id),
     FOREIGN KEY(screening_id) REFERENCES screening_schedule(screening_id)
 );
 
@@ -74,11 +74,11 @@ CREATE TABLE payment(
 );
 
 CREATE TABLE review( 
-    mem_id VARCHAR(50),
+    member_id VARCHAR(50),
     movie_id INT,
     review_date DATE,
     grade DECIMAL(3,2),
     review_contents VARCHAR(300),
-    FOREIGN KEY(mem_id) REFERENCES member(mem_id),
+    FOREIGN KEY(member_id) REFERENCES member(member_id),
     FOREIGN KEY(movie_id) REFERENCES movie(movie_id)
 );
