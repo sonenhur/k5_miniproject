@@ -1,5 +1,5 @@
 -- movie 테이블에 더미 데이터 추가
-INSERT INTO movie (movie_title, release_date, running_time, film_rate, genre, synopsis, director, cast)
+INSERT INTO movie (movie_title, release_date, running_time, film_rate, genre, synopsis, director, casts)
 VALUES 
     ('백두산', '2019-12-19', 128, 12, '액션, 드라마', '남과 북의 군사대결을 그린 영화.', '이헌곤', '이병헌, 하정우, 마동석'),
     ('남산의 부장들', '2020-01-22', 114, 15, '드라마', '대한민국의 역사를 소재로 한 영화.', '우민호', '이병헌, 이성민, 고두심'),
@@ -52,7 +52,7 @@ VALUES
     (2, 'C', 2);
 
 -- member 테이블에 더미 데이터 추가
-INSERT INTO member (mem_id, mem_pw, mem_birth, mem_address, mem_phone, join_date)
+INSERT INTO member (member_id, member_pw, member_birth, member_address, member_phone, join_date)
 VALUES 
     ('user1', 'password1', '1990-01-01', '서울특별시 강남구', '010-1234-5678', '2020-01-01'),
     ('user2', 'password2', '1995-05-15', '경기도 수원시', '010-9876-5432', '2020-01-02'),
@@ -62,7 +62,7 @@ VALUES
     ('user6', 'password6', '1984-04-25', '대구광역시 동구', '010-7777-8888', '2022-01-06');
 
 -- ticketing 테이블에 더미 데이터 추가
-INSERT INTO ticketing (mem_id, adult, teenager, child, screening_cd)
+INSERT INTO ticketing (member_id, adult, teenager, child, screening_cd)
 VALUES 
     ('user1', 2, 0, 1, 1),
     ('user2', 1, 1, 0, 2),
@@ -71,18 +71,18 @@ VALUES
     ('user5', 1, 0, 1, 5),
     ('user6', 2, 0, 0, 6);
 
--- payment 테이블에 더미 데이터 추가 (원화)
+-- payment 테이블에 더미 데이터 추가
 INSERT INTO payment (ticket_cd, payment_date, payment_method, amount)
 VALUES 
-    (1, '2020-01-12', '신용 카드', 15000.00),
-    (2, '2020-01-13', '신용 카드', 20000.00),
-    (3, '2020-01-14', '신용 카드', 10000.00),
-    (4, '2020-01-15', '신용 카드', 15000.00),
-    (5, '2022-01-15', '신용 카드', 20000.00),
-    (6, '2022-01-15', '신용 카드', 15000.00);
+    (1, '2020-01-12', '신용 카드', 15000),
+    (2, '2020-01-13', '신용 카드', 20000),
+    (3, '2020-01-14', '신용 카드', 10000),
+    (4, '2020-01-15', '신용 카드', 15000),
+    (5, '2022-01-15', '신용 카드', 20000),
+    (6, '2022-01-15', '신용 카드', 15000);
 
 -- review 테이블에 더미 데이터 추가
-INSERT INTO review (mem_id, movie_cd, review_date, grade, review_contents)
+INSERT INTO review (member_id, movie_cd, review_date, grade, review_contents)
 VALUES 
     ('user1', 1, '2020-01-05', 8.7, '스릴 넘치는 액션 장면이 인상적이었습니다.'),
     ('user2', 2, '2020-01-06', 9.2, '감동적인 연기와 몰입도가 뛰어난 영화입니다.'),
