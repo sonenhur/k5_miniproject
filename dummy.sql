@@ -9,14 +9,14 @@ VALUES
     ('도굴', '2020-11-04', 114, 15, '범죄, 드라마', '전국의 유명 미술품을 목표로 한 도둑들의 이야기.', '박정배', '이제훈, 조우진, 신혜선');
 
 -- screening_schedule 테이블에 더미 데이터 추가
-INSERT INTO screening_schedule (movie_cd, screening_date, theater_cd)
+INSERT INTO screening_schedule (movie_id, screening_date, start_time, end_time, theater_id)
 VALUES 
-    (1, '2020-01-12', 1),
-    (2, '2020-01-13', 2),
-    (3, '2020-01-14', 1),
-    (4, '2020-01-15', 2),
-    (5, '2022-01-12', 1),
-    (6, '2022-01-13', 2);
+    (1, '2024-02-15', '10:00:00', '12:00:00', 1),
+    (1, '2024-02-15', '14:00:00', '16:00:00', 1),
+    (1, '2024-02-15', '11:00:00', '13:00:00', 2),
+    (2, '2024-02-15', '12:00:00', '14:00:00', 3),
+    (2, '2024-02-15', '16:00:00', '18:00:00', 3),
+    (3, '2024-02-15', '13:00:00', '15:00:00', 4);
 
 -- cinema 테이블에 더미 데이터 추가
 INSERT INTO cinema (cinema_id, cinema_name, cinema_location, parking_info, cinema_phone)
