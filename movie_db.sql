@@ -1,20 +1,13 @@
 CREATE TABLE movie(
     movie_cd INT AUTO_INCREMENT PRIMARY KEY,
     movie_title VARCHAR(100),
-    movie_url VARCHAR(300),
-    trailer_url VARCHAR(300),
     release_date DATE,
     running_time INT,
-    film_rate INT
-);
-
-CREATE TABLE movie_info(
-    movie_cd INT PRIMARY KEY,
+    film_rate INT,
+    genre VARCHAR(50),
     synopsis VARCHAR(2000),
     director VARCHAR(50),
-    cast VARCHAR(100),
-    distributor VARCHAR(50),
-    FOREIGN KEY(movie_cd) REFERENCES movie(movie_cd)
+    cast VARCHAR(100)	
 );
 
 CREATE TABLE member( 
@@ -22,7 +15,7 @@ CREATE TABLE member(
     mem_pw VARCHAR(2000),
     mem_birth DATE,
     mem_address VARCHAR(100),
-    mem_phone VARCHAR(12),
+    mem_phone VARCHAR(15),
     join_date DATE
 );
 
@@ -30,8 +23,7 @@ CREATE TABLE review(
     mem_id VARCHAR(50),
     movie_cd INT,
     review_date DATE,
-    review_time TIMESTAMP,
-    grade DECIMAL(3,1),
+    grade DECIMAL(3,2),
     review_contents VARCHAR(300),
     FOREIGN KEY(mem_id) REFERENCES member(mem_id),
     FOREIGN KEY(movie_cd) REFERENCES movie(movie_cd)
@@ -59,7 +51,7 @@ CREATE TABLE cinema(
     cinema_name VARCHAR(15),
     cinema_location VARCHAR(100),
     parking_info VARCHAR(100), 
-    cinema_phone VARCHAR(12)
+    cinema_phone VARCHAR(15)
 );
 
 CREATE TABLE seat( 
