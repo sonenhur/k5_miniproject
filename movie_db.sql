@@ -14,6 +14,8 @@ CREATE TABLE screening_schedule(
     screening_id INT AUTO_INCREMENT PRIMARY KEY,
     movie_id INT,
     screening_date DATE,
+    start_time TIME,
+    end_time TIME,
     theater_id INT,
     FOREIGN KEY(movie_id) REFERENCES movie(movie_id),
     FOREIGN KEY(theater_id) REFERENCES theater(theater_id)
