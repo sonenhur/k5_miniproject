@@ -23,7 +23,7 @@ CREATE TABLE member(
     mem_birth DATE,
     mem_address VARCHAR(100),
     mem_phone VARCHAR(12),
-    join_date DATE,
+    join_date DATE
 );
 
 CREATE TABLE review( 
@@ -79,4 +79,16 @@ CREATE TABLE ticketing(
     screening_cd INT,
     FOREIGN KEY(mem_id) REFERENCES member(mem_id),
     FOREIGN KEY(screening_cd) REFERENCES screening_schedule(screening_cd)
+);
+
+CREATE TABLE payment(
+    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_cd INT,
+    payment_date DATE,
+    payment_method VARCHAR(50),
+    card_number VARCHAR(16),
+    expiration_date DATE,
+    cvv VARCHAR(3),
+    amount DECIMAL(10,2),
+    FOREIGN KEY(ticket_cd) REFERENCES ticketing(ticket_cd)
 );
