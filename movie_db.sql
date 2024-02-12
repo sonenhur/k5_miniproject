@@ -25,7 +25,6 @@ CREATE TABLE cinema(
     cinema_id INT PRIMARY KEY, 
     cinema_name VARCHAR(15),
     cinema_location VARCHAR(100),
-    parking_info VARCHAR(100), 
     cinema_phone VARCHAR(15)
 );
 
