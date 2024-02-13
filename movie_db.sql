@@ -1,3 +1,18 @@
+CREATE TABLE cinema( 
+    cinema_id INT PRIMARY KEY, 
+    cinema_name VARCHAR(15),
+    cinema_location VARCHAR(100),
+    cinema_phone VARCHAR(15)
+);
+
+CREATE TABLE theater( 
+    theater_id INT PRIMARY KEY,
+    cinema_id INT,
+    theater_no INT,
+    theater_type VARCHAR(20),
+    FOREIGN KEY(cinema_id) REFERENCES cinema(cinema_id)
+);
+
 CREATE TABLE movie(
     movie_id INT AUTO_INCREMENT PRIMARY KEY,
     movie_title VARCHAR(100),
@@ -21,21 +36,6 @@ CREATE TABLE screening_schedule(
     FOREIGN KEY(theater_id) REFERENCES theater(theater_id)
 );
 
-CREATE TABLE cinema( 
-    cinema_id INT PRIMARY KEY, 
-    cinema_name VARCHAR(15),
-    cinema_location VARCHAR(100),
-    cinema_phone VARCHAR(15)
-);
-
-CREATE TABLE theater( 
-    theater_id INT PRIMARY KEY,
-    cinema_id INT,
-    theater_no INT,
-    theater_type VARCHAR(20),
-    FOREIGN KEY(cinema_id) REFERENCES cinema(cinema_id)
-);
-
 CREATE TABLE seat( 
     seat_id INT AUTO_INCREMENT PRIMARY KEY,
     theater_id INT,
@@ -43,7 +43,6 @@ CREATE TABLE seat(
     seat_col_no INT,
     FOREIGN KEY(theater_id) REFERENCES theater(theater_id)
 );
-
 
 CREATE TABLE member( 
     member_id VARCHAR(50) PRIMARY KEY,
