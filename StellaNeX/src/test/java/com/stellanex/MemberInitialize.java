@@ -11,10 +11,9 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootTest
 public class MemberInitialize {
+    PasswordEncoder encoder = new BCryptPasswordEncoder(); // 비밀번호 암호화 인터페이스/구현체
     @Autowired
     private MemberRepository memRepo;
-
-    PasswordEncoder encoder = new BCryptPasswordEncoder(); // 비밀번호 암호화 인터페이스/구현체
 
     @Test
     public void memberInitialize() {
