@@ -36,7 +36,7 @@ VALUES
     (6, 3, 2, '스크린2');
 
 -- seat 테이블에 더미 데이터 추가
-INSERT INTO seat (theater_cd, seat_row_no, seat_col_no)
+INSERT INTO seat (theater_id, seat_row_no, seat_col_no)
 VALUES 
     (1, 'A', 1),
     (1, 'A', 2),
@@ -62,7 +62,7 @@ VALUES
     ('user6', 'password6', '1984-04-25', '대구광역시 동구', '010-7777-8888', '2022-01-06');
 
 -- ticketing 테이블에 더미 데이터 추가
-INSERT INTO ticketing (member_id, adult, teenager, child, screening_cd)
+INSERT INTO ticketing (member_id, adult, teenager, child, screening_id)
 VALUES 
     ('user1', 2, 0, 1, 1),
     ('user2', 1, 1, 0, 2),
@@ -72,7 +72,7 @@ VALUES
     ('user6', 2, 0, 0, 6);
 
 -- payment 테이블에 더미 데이터 추가
-INSERT INTO payment (ticket_cd, payment_date, payment_method, amount)
+INSERT INTO payment (ticket_id, payment_date, payment_method, amount)
 VALUES 
     (1, '2020-01-12', '신용 카드', 15000),
     (2, '2020-01-13', '신용 카드', 20000),
@@ -82,7 +82,7 @@ VALUES
     (6, '2022-01-15', '신용 카드', 15000);
 
 -- review 테이블에 더미 데이터 추가
-INSERT INTO review (member_id, movie_cd, review_date, grade, review_contents)
+INSERT INTO review (member_id, movie_id, review_date, grade, review_contents)
 VALUES 
     ('user1', 1, '2020-01-05', 8.7, '스릴 넘치는 액션 장면이 인상적이었습니다.'),
     ('user2', 2, '2020-01-06', 9.2, '감동적인 연기와 몰입도가 뛰어난 영화입니다.'),
