@@ -14,7 +14,7 @@ CREATE TABLE theater(
 );
 
 CREATE TABLE movie(
-    movie_id INT AUTO_INCREMENT PRIMARY KEY,
+    movie_id INT PRIMARY KEY,
     movie_title VARCHAR(100),
     release_date DATE,
     running_time VARCHAR(50),
@@ -26,7 +26,7 @@ CREATE TABLE movie(
 );
 
 CREATE TABLE screening_schedule( 
-    screening_id INT AUTO_INCREMENT PRIMARY KEY,
+    screening_id INT PRIMARY KEY,
     movie_id INT,
     screening_date DATE,
     start_time TIME,
@@ -37,7 +37,7 @@ CREATE TABLE screening_schedule(
 );
 
 CREATE TABLE seat( 
-    seat_id INT AUTO_INCREMENT PRIMARY KEY,
+    seat_id INT PRIMARY KEY,
     theater_id INT,
     seat_row_no CHAR(1),
     seat_col_no INT,
@@ -54,7 +54,7 @@ CREATE TABLE member(
 );
 
 CREATE TABLE ticketing( 
-    ticket_id INT AUTO_INCREMENT PRIMARY KEY,
+    ticket_id INT PRIMARY KEY,
     member_id VARCHAR(50),
     adult INT,
     teenager INT,
@@ -65,7 +65,7 @@ CREATE TABLE ticketing(
 );
 
 CREATE TABLE payment(
-    payment_id INT AUTO_INCREMENT PRIMARY KEY,
+    payment_id INT PRIMARY KEY,
     ticket_id INT,
     payment_date DATE,
     payment_method VARCHAR(50),
