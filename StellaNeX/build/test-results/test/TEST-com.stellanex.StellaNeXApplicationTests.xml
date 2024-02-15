@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="com.stellanex.StellaNeXApplicationTests" tests="1" skipped="0" failures="0" errors="0" timestamp="2024-02-13T02:03:44" hostname="DESKTOP-1A7V7PR" time="0.003">
-  <properties/>
-  <testcase name="contextLoads()" classname="com.stellanex.StellaNeXApplicationTests" time="0.003"/>
-  <system-out><![CDATA[2024-02-13T11:03:44.837+09:00  INFO 8632 --- [    Test worker] t.c.s.AnnotationConfigContextLoaderUtils : Could not detect default configuration classes for test class [com.stellanex.StellaNeXApplicationTests]: StellaNeXApplicationTests does not declare any static, non-private, non-final, nested classes annotated with @Configuration.
-2024-02-13T11:03:44.839+09:00  INFO 8632 --- [    Test worker] .b.t.c.SpringBootTestContextBootstrapper : Found @SpringBootConfiguration com.stellanex.StellaNeXApplication for test class com.stellanex.StellaNeXApplicationTests
-]]></system-out>
-  <system-err><![CDATA[]]></system-err>
-</testsuite>
