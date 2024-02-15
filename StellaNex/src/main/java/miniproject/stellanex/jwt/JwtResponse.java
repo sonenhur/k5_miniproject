@@ -1,4 +1,5 @@
 package miniproject.stellanex.jwt;
+
 import lombok.Builder;
 import lombok.Getter;
 

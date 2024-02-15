@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequiredArgsConstructor
-//@CrossOrigin(origins = "http://localhost:3000", exposedHeaders = "Authorization")
 public class MemberController {
 
     private final MemberService memberService;
@@ -38,3 +37,4 @@ public class MemberController {
 
         return new ResponseEntity<>(httpHeaders, HttpStatus.OK);
     }
+}

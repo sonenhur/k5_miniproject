@@ -2,7 +2,16 @@ package miniproject.stellanex.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-
+import miniproject.stellanex.domain.Member;
+import miniproject.stellanex.exception.AppException;
+import miniproject.stellanex.exception.ErrorCode;
+import miniproject.stellanex.jwt.JwtProvider;
+import miniproject.stellanex.jwt.JwtResponse;
+import miniproject.stellanex.persistence.MemberRepository;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -10,32 +19,27 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class MemberService {
 
-    private final MemberRepository userRepository;
+    private final MemberRepository memberRepository;
     private final BCryptPasswordEncoder encoder;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
 
 
-    public void join(String member_id, String member_pw, String nickname) {
+    public void join(String email, String password, String name) {
 
         // userId(email) 중복 check
-        userRepository.findByUserId(userId)
+        memberRepository.findByEmail(email)
                 .ifPresent(user -> {
-                    throw new AppException(ErrorCode.USERID_DUPLICATED, userId + "는 이미 존재하는 회원입니다 .");
-                });
-
-        userRepository.findByNickname(nickname)
-                .ifPresent(user -> {
-                    throw new AppException(ErrorCode.NICKNAME_DUPLICATED, nickname + "는 이미 존재하는 닉네임입니다.");
+                    throw new AppException(ErrorCode.EMAIL_DUPLICATED, email + "는 이미 존재하는 회원입니다 .");
                 });
 
         // 저장
-        User user = User.builder()
-                .userId(userId)
+        Member member = Member.builder()
+                .email(email)
                 .password(encoder.encode(password))
-                .nickname(nickname)
+                .name(name)
                 .build();
-        userRepository.save(user);
+        memberRepository.save(member);
 
     }
 
@@ -54,3 +58,4 @@ public class MemberService {
 
         return token;
     }
+}
