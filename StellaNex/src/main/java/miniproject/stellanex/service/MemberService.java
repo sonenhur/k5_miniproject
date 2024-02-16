@@ -3,6 +3,7 @@ package miniproject.stellanex.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.domain.Member;
+import miniproject.stellanex.dto.MemberInfoResponse;
 import miniproject.stellanex.exception.AppException;
 import miniproject.stellanex.exception.ErrorCode;
 import miniproject.stellanex.jwt.JwtProvider;
@@ -11,6 +12,7 @@ import miniproject.stellanex.persistence.MemberRepository;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -58,4 +60,13 @@ public class MemberService {
 
         return token;
     }
+
+    public MemberInfoResponse getInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다."));
+
+        return new MemberInfoResponse(member.getEmail(), member.getName());
+    }
+
+
 }
