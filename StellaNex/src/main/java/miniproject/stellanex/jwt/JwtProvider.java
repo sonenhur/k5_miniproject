@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 
@@ -17,21 +18,12 @@ import java.util.Date;
 @Component
 @Slf4j
 public class JwtProvider {
-
-    //    @Value("${jwt.token.secret}")
-//    private String secretKey;
     private final Key key;
 
     public JwtProvider(Environment env) {
         byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.token.secret"));
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
-
-
-//    public JwtProvider() {
-//        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-//        this.key = Keys.hmacShaKeyFor(keyBytes);
-//    }
 
     public JwtResponse createToken(Authentication authentication) {
 
@@ -45,13 +37,7 @@ public class JwtProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + 86400000))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
-
-        return JwtResponse.create(accessToken, refreshToken);
+        return JwtResponse.create(accessToken);
     }
 
     // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내기
@@ -67,9 +53,9 @@ public class JwtProvider {
         /* 권한이 존재하지 않음  => null (x)
         의미없는 값이라도 Collections.EMPTY_LIST, Collections.singletonList(new SimpleGrantedAuthority(DEFAULT)) 설정하기
          */
-        User principal = new User(claims.getSubject(), "", Collections.EMPTY_LIST);
+        User principal = new User(claims.getSubject(), "", Collections.singletonList(new SimpleGrantedAuthority("member")));
 
-        return new UsernamePasswordAuthenticationToken(principal, "", Collections.EMPTY_LIST);
+        return new UsernamePasswordAuthenticationToken(principal, "", Collections.singletonList(new SimpleGrantedAuthority("member")));
     }
 
     public boolean validateToken(String token) {
@@ -95,5 +81,4 @@ public class JwtProvider {
             return e.getClaims();
         }
     }
-
 }

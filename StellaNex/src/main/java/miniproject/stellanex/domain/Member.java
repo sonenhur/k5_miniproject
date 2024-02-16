@@ -15,20 +15,15 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Getter
 @Builder
-@DynamicInsert
-@Table(name = "member")
 public class Member {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String email;
-    @Column(nullable = false)
     private String password;
-    @Column(nullable = false)
     private String name;
-    @Column(nullable = false)
     private String birth;
-    @ColumnDefault("member")
-    private Role role;
+
     @Builder.Default
     private LocalDateTime registered = LocalDateTime.now();
 }

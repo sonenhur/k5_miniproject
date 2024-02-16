@@ -24,8 +24,7 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
 
-
-    public void join(String email, String password, String name) {
+    public void join(String email, String password, String name, String birth) {
 
         // userId(email) 중복 check
         memberRepository.findByEmail(email)
@@ -38,16 +37,17 @@ public class MemberService {
                 .email(email)
                 .password(encoder.encode(password))
                 .name(name)
+                .birth(birth)
                 .build();
         memberRepository.save(member);
 
     }
 
-    public JwtResponse login(String userId, String password) {
+    public JwtResponse login(String email, String password) {
 
         // 1. Login ID/PW 를 기반으로 Authentication 객체 생성
         // 이때 authentication 는 인증 여부를 확인하는 authenticated 값이 false
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userId, password);
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
         // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행

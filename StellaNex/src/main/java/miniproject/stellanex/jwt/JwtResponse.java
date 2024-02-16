@@ -7,12 +7,10 @@ import lombok.Getter;
 @Builder
 public class JwtResponse {
     private String accessToken;
-    private String refreshToken;
 
-    public static JwtResponse create(String accessToken, String refreshToken) {
+    public static JwtResponse create(String accessToken) {
         return JwtResponse.builder()
                 .accessToken(accessToken)
-                .refreshToken(refreshToken)
                 .build();
     }
 }

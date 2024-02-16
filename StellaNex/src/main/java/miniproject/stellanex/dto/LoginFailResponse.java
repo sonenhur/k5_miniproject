@@ -9,14 +9,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class JoinSuccessResponse {
+public class LoginFailResponse {
     private int status;
     private String message;
 
-    public static JoinSuccessResponse toDto() {
-        return JoinSuccessResponse.builder()
-                .status(200)
-                .message("회원가입 성공!")
+    public static LoginFailResponse toDto() {
+        return LoginFailResponse.builder()
+                .status(400)
+                .message("Failed!")
                 .build();
     }
 }

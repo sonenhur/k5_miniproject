@@ -16,7 +16,7 @@ public class JoinFailResponse {
     public static JoinFailResponse toDto() {
         return JoinFailResponse.builder()
                 .status(400)
-                .message("이미 존재하는 회원입니다.")
+                .message("Failed!")
                 .build();
     }
 }
