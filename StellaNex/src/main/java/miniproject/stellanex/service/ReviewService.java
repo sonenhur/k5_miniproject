@@ -1,12 +1,12 @@
 package miniproject.stellanex.service;
 
 import lombok.RequiredArgsConstructor;
-import miniproject.stellanex.domain.Review;
 import miniproject.stellanex.domain.Member;
+import miniproject.stellanex.domain.Review;
 import miniproject.stellanex.dto.ReviewInfoResponse;
 import miniproject.stellanex.dto.ReviewRequest;
-import miniproject.stellanex.persistence.ReviewRepository;
 import miniproject.stellanex.persistence.MemberRepository;
+import miniproject.stellanex.persistence.ReviewRepository;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,6 +26,7 @@ public class ReviewService {
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
 
         Review review = Review.builder()
+                .grade(grade)
                 .content(content)
                 .writer(member)
                 .build();
@@ -33,19 +34,15 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ReviewInfoResponse getReview(String email, Long id) {
         Review review = reviewRepository.findById(id)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 게시물입니다."));
 
-        Member writer = review.getWriter();
-
-        ReviewInfoResponse info = ReviewInfoResponse.builder()
+        return ReviewInfoResponse.builder()
                 .content(review.getContent())
-                .writer(writer.getEmail())
+                .writer(review.getWriter().getEmail())
                 .build();
-
-        return info;
     }
 
     public void edit(String email, Long reviewId, ReviewRequest dto) {

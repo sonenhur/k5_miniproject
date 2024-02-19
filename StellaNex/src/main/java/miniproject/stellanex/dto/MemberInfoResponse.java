@@ -1,9 +1,6 @@
 package miniproject.stellanex.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 import miniproject.stellanex.domain.Member;
 
 @Getter
@@ -11,6 +8,7 @@ import miniproject.stellanex.domain.Member;
 @AllArgsConstructor
 @NoArgsConstructor
 public class MemberInfoResponse {
+
     private String email;
     private String name;
 

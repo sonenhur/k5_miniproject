@@ -6,7 +6,7 @@ import lombok.Getter;
 @Getter
 @Builder
 public class JwtResponse {
-    private String accessToken;
+    private final String accessToken;
 
     public static JwtResponse create(String accessToken) {
         return JwtResponse.builder()

@@ -10,6 +10,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 public class JoinSuccessResponse {
+
     private int status;
     private String message;
 

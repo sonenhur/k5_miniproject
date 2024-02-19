@@ -1,7 +1,9 @@
 package miniproject.stellanex.jwt;
 
-import io.jsonwebtoken.*;
-import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.env.Environment;
@@ -21,64 +23,43 @@ public class JwtProvider {
     private final Key key;
 
     public JwtProvider(Environment env) {
-        byte[] keyBytes = Decoders.BASE64.decode(env.getProperty("jwt.token.secret"));
+        byte[] keyBytes = env.getProperty("jwt.token.secret").getBytes();
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 
     public JwtResponse createToken(Authentication authentication) {
+        long now = System.currentTimeMillis();
 
-        long now = new Date().getTime();
+        Date expirationTime = new Date(now + 43200000); // 12 hours
 
-        // Access Token 생성
-        Date accessTokenExpires = new Date(now + 43200000);
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
-                .setExpiration(accessTokenExpires)
+                .setExpiration(expirationTime)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
         return JwtResponse.create(accessToken);
     }
 
-    // JWT 토큰을 복호화하여 토큰에 들어있는 정보를 꺼내기
     public Authentication getAuthentication(String accessToken) {
-
-        // 토큰 복호화
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(accessToken)
                 .getBody();
 
-        /* 권한이 존재하지 않음  => null (x)
-        의미없는 값이라도 Collections.EMPTY_LIST, Collections.singletonList(new SimpleGrantedAuthority(DEFAULT)) 설정하기
-         */
-        User principal = new User(claims.getSubject(), "", Collections.singletonList(new SimpleGrantedAuthority("member")));
+        User principal = new User(claims.getSubject(), "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER")));
 
-        return new UsernamePasswordAuthenticationToken(principal, "", Collections.singletonList(new SimpleGrantedAuthority("member")));
+        return new UsernamePasswordAuthenticationToken(principal, "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER")));
     }
 
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
             return true;
-        } catch (io.jsonwebtoken.security.SecurityException | MalformedJwtException e) {
-            log.info("잘못된 JWT 서명입니다.");
-        } catch (ExpiredJwtException e) {
-            log.info("만료된 JWT 토큰입니다.");
-        } catch (UnsupportedJwtException e) {
-            log.info("지원되지 않는 JWT 토큰입니다.");
-        } catch (IllegalArgumentException e) {
-            log.info("JWT 토큰이 잘못되었습니다.");
-        }
-        return false;
-    }
-
-    private Claims parseClaims(String accessToken) {
-        try {
-            return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
-        } catch (ExpiredJwtException e) {
-            return e.getClaims();
+        } catch (JwtException | IllegalArgumentException e) {
+            log.info("Invalid JWT token: {}", e.getMessage());
+            return false;
         }
     }
 }

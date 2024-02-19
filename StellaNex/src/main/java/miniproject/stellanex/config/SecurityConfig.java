@@ -19,25 +19,21 @@ public class SecurityConfig {
     @Autowired
     private JwtProvider jwtProvider;
 
-
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-
-        // 람다식:함수형 인터페이스에만 사용 가능 (메서드가 하나뿐인 경우)
-        http.authorizeHttpRequests(auth -> auth
+        http
+                .authorizeHttpRequests(auth -> auth
 //                .requestMatchers("/member/**").authenticated()
-//                .requestMatchers("/admin/**").hasRole("ADMIN") // ROLE_ADMIN인 사람에게 여러 접근 권한을 부여
-                // .requestMatchers("/admin/**", "/api/delete/**").hasRole("ADMIN") // ROLE_ADMIN인 사람에게 여러 접근 권한을 부여
-                .anyRequest().permitAll());
-        // 람다식:함수형 인터페이스에만 사용 가능 (메서드가 하나뿐인 경우)
-        http.formLogin(AbstractHttpConfigurer::disable) //Form을 이용한 로그인을 사용하지 않겠다는 설정
-                .httpBasic(AbstractHttpConfigurer::disable) // Http Basic 인증 방식을 사용하지 않겠다는 설정
-                .csrf(AbstractHttpConfigurer::disable); //CSRF보호 비활성화 (JS에서 호출 가능하도록)
+//                .requestMatchers("/admin/**", "/api/delete/**").hasRole("ADMIN")
+                        .anyRequest().permitAll()) // 모든 요청을 허용
+                .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화
+                .httpBasic(AbstractHttpConfigurer::disable) // Http Basic 인증 방식 비활성화
+                .csrf(AbstractHttpConfigurer::disable) // CSRF 보호 비활성화
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)); // 세션 유지하지 않음
 
-        //세션을 유지하지 않겠다고 설정 -> URL 호출 뒤 응답할때까지는 유지되지만, 응답 후 삭제된다는 의미
-        http.sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
-
-        http.addFilterBefore(new JWTAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
+        http
+                .addFilterBefore(new JWTAuthorizationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

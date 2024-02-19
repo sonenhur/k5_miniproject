@@ -15,36 +15,31 @@ import java.io.IOException;
 
 @RequiredArgsConstructor
 public class JWTAuthorizationFilter extends OncePerRequestFilter {
-    // OncePerRequestFilter를 상속받게 되면 하나의 요청에 대해서 단 한번만 필터를 거치게 된다.
-    // 예를 들어 포워딩해서 다른 페이지로 이동하게 되더라도, 다시 이 필터를 거치지 않게 된다.
 
-    //인가 설정을 위해 사용자의 Role 정보를 읽어들이기 위한 객체설정
     private final JwtProvider jwtProvider;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+        // 필터가 요청을 처리하는 메서드
 
-        // 1. Request Header 에서 JWT 토큰 추출
-        String token = resolveToken(request);
+        String token = resolveToken(request); // 토큰 추출
 
-        // 2. validateToken 으로 토큰 유효성 검사
-        if (token != null && jwtProvider.validateToken(token)) {
-            // 토큰이 유효할 경우 토큰에서 Authentication 객체를 가지고 와서 SecurityContext 에 저장
-            Authentication authentication = jwtProvider.getAuthentication(token);
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+        if (token != null && jwtProvider.validateToken(token)) { // 토큰 유효성 검사
+            Authentication authentication = jwtProvider.getAuthentication(token); // 토큰에서 인증 정보 추출
+            SecurityContextHolder.getContext().setAuthentication(authentication); // SecurityContext에 인증 정보 저장
         }
-        filterChain.doFilter(request, response);
+        filterChain.doFilter(request, response); // 다음 필터로 요청 전달
     }
 
-    // Request Header 에서 토큰 정보 추출
     private String resolveToken(HttpServletRequest request) {
+        // Request Header에서 토큰 추출
 
-        String bearerToken = request.getHeader("Authorization");
+        String bearerToken = request.getHeader("Authorization"); // Authorization 헤더에서 토큰 추출
 
         if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
-            return bearerToken.substring(7);
+            return bearerToken.substring(7); // "Bearer " 부분을 제외한 토큰 반환
         }
-        return null;
+        return null; // 토큰이 없으면 null 반환
     }
 
 }
