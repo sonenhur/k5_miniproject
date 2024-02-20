@@ -23,7 +23,7 @@ public class SecurityConfig {
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(auth -> auth
-//                .requestMatchers("/member/**").authenticated()
+                .requestMatchers("/member/review").authenticated()
 //                .requestMatchers("/admin/**", "/api/delete/**").hasRole("ADMIN")
                         .anyRequest().permitAll()) // 모든 요청을 허용
                 .formLogin(AbstractHttpConfigurer::disable) // Form 기반 로그인 비활성화

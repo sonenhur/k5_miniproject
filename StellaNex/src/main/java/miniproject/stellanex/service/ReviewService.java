@@ -12,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.module.FindException;
-import java.text.DecimalFormat;
 
 @Service
 @RequiredArgsConstructor
@@ -21,9 +20,13 @@ public class ReviewService {
     private final ReviewRepository reviewRepository;
     private final MemberRepository memberRepository;
 
-    public void save(String email, DecimalFormat grade, String content) {
+    public void save(String email, int grade, String content) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
+
+        if (member == null) {
+            throw new IllegalStateException("Member 객체가 null입니다.");
+        }
 
         Review review = Review.builder()
                 .grade(grade)
@@ -45,28 +48,18 @@ public class ReviewService {
                 .build();
     }
 
+    @Transactional
     public void edit(String email, Long reviewId, ReviewRequest dto) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다"));
-        reviewRepository.findById(reviewId)
+        Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new FindException("존재하지 않는 게시물입니다"));
-        delete(email, reviewId);
 
-        Review review = Review.builder()
-                .id(member.getId())
-                .content(dto.getContent())
-                .writer(member)
-                .build();
-        reviewRepository.save(review);
+        // 리뷰의 내용을 업데이트
+        review.updateContent(dto.getContent());
     }
 
+
+    @Transactional
     public void delete(String email, Long reviewId) {
-        memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다"));
-        memberRepository.findById(reviewId)
-                .orElseThrow(() -> new FindException("존재하지 않는 게시물입니다"));
         reviewRepository.deleteById(reviewId);
     }
-
-
 }

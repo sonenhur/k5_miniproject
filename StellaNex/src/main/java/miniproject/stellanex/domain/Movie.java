@@ -1,9 +1,6 @@
 package miniproject.stellanex.domain;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,12 +17,20 @@ public class Movie {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long movie_id;
+    @Column(nullable = false)
     private String title;
+    @Column(nullable = false)
     private Date release_date;
+    @Column(nullable = false)
     private String running_time;
-    private String rating;
+    @Column(nullable = false)
+    private String age_rating;
+    @Column(nullable = false)
     private String genre;
+    @Column(nullable = false)
     private String synopsis;
+    @Column(nullable = false)
     private String director;
+    @Column(nullable = false)
     private String casts;
 }
