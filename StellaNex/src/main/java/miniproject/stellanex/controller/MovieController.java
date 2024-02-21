@@ -6,6 +6,7 @@ import miniproject.stellanex.domain.Movie;
 import miniproject.stellanex.dto.MovieInputRequest;
 import miniproject.stellanex.persistence.MovieRepository;
 import miniproject.stellanex.service.MovieService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,17 +23,31 @@ public class MovieController {
     private final MovieRepository movieRepository;
 
     @PostMapping("/movie/post")
-    public ResponseEntity<String> save(@RequestBody MovieInputRequest dto) {
-        movieService.save(dto.getTitle(), dto.getRelease_date(), dto.getRunning_time(), dto.getAge_rating(), dto.getGenre(), dto.getSynopsis(), dto.getDirector(), dto.getCasts());
-        log.info("새 영화 정보가 성공적으로 등록되었습니다: {}", dto.getTitle());
-        return ResponseEntity.ok("게시 성공!");
+    public ResponseEntity<?> save(@RequestBody MovieInputRequest dto) {
+        try {
+            movieService.save(dto.getTitle(), dto.getRelease_date(), dto.getRunning_time(), dto.getAge_rating(), dto.getGenre(), dto.getSynopsis(), dto.getDirector(), dto.getCasts());
+            log.info("새 영화 정보가 성공적으로 등록되었습니다: {}", dto.getTitle());
+            return ResponseEntity.ok("게시 성공!");
+        } catch (Exception e) {
+            log.error("영화 정보 게시 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시 실패: " + e.getMessage());
+        }
     }
 
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<Movie> getInfo(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId) {
-        log.info("영화 정보 조회: {}", movieId);
-        Movie movie = movieRepository.findById(movieId)
-                .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
-        return ResponseEntity.ok(movie);
+    public ResponseEntity<?> getInfo(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId) {
+        try {
+            log.info("영화 정보 조회: {}", movieId);
+            Movie movie = movieRepository.findById(movieId)
+                    .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
+            return ResponseEntity.ok(movie);
+        } catch (NoSuchElementException e) {
+            log.error("영화 정보 조회 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("영화를 찾을 수 없습니다.");
+        } catch (Exception e) {
+            log.error("영화 정보 조회 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 실패: " + e.getMessage());
+        }
     }
+
 }

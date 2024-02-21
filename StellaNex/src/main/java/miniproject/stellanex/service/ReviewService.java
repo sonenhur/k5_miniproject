@@ -6,6 +6,7 @@ import miniproject.stellanex.domain.Movie;
 import miniproject.stellanex.domain.Review;
 import miniproject.stellanex.dto.ReviewInfoResponse;
 import miniproject.stellanex.dto.ReviewRequest;
+import miniproject.stellanex.exception.UnauthorizedException;
 import miniproject.stellanex.persistence.MemberRepository;
 import miniproject.stellanex.persistence.MovieRepository;
 import miniproject.stellanex.persistence.ReviewRepository;
@@ -31,9 +32,6 @@ public class ReviewService {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
 
-        if (member == null) {
-            throw new IllegalStateException("Member 객체가 null입니다.");
-        }
         Movie movie = movieRepository.findById(movie_id)
                 .orElseThrow(() -> new NoSuchElementException("영화를 찾을 수 없습니다."));
 
@@ -67,12 +65,26 @@ public class ReviewService {
         Review review = reviewRepository.findById(reviewId)
                 .orElseThrow(() -> new FindException("존재하지 않는 게시물입니다"));
 
-        // 리뷰의 내용을 업데이트
+        // 현재 로그인한 사용자와 리뷰 작성자의 이메일 비교하여 권한 확인
+        if (!review.getWriter().getEmail().equals(email)) {
+            throw new UnauthorizedException("본인의 리뷰만 수정할 수 있습니다.");
+        }
+
+        // 리뷰의 내용과 평점을 업데이트
         review.updateContent(dto.getContent());
+        review.updateGrade(dto.getGrade());
     }
+
 
     @Transactional
     public void delete(String email, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new FindException("존재하지 않는 게시물입니다"));
+
+        // 현재 로그인한 사용자와 리뷰 작성자의 이메일 비교하여 권한 확인
+        if (!review.getWriter().getEmail().equals(email)) {
+            throw new UnauthorizedException("본인의 리뷰만 삭제할 수 있습니다.");
+        }
         reviewRepository.deleteById(reviewId);
     }
 }

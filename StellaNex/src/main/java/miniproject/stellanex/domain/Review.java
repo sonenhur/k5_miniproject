@@ -38,4 +38,8 @@ public class Review {
     public void updateContent(String content) {
         this.content = content;
     }
+
+    public void updateGrade(int grade) {
+        this.grade = grade;
+    }
 }

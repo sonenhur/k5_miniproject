@@ -28,23 +28,14 @@ public class MemberService {
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final JwtProvider jwtProvider;
 
+    @Transactional
     public void join(String email, String password, String name, String birth) {
+        if (memberRepository.existsByEmail(email)) {
+            throw new AppException(ErrorCode.EMAIL_DUPLICATED, email + "는 이미 존재하는 회원입니다.");
+        }
 
-        // userId(email) 중복 check
-        memberRepository.findByEmail(email)
-                .ifPresent(user -> {
-                    throw new AppException(ErrorCode.EMAIL_DUPLICATED, email + "는 이미 존재하는 회원입니다 .");
-                });
-
-        // 저장
-        Member member = Member.builder()
-                .email(email)
-                .password(encoder.encode(password))
-                .name(name)
-                .birth(birth)
-                .build();
+        Member member = createMember(email, password, name, birth);
         memberRepository.save(member);
-
     }
 
     public JwtResponse login(String email, String password) {
@@ -54,7 +45,7 @@ public class MemberService {
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(email, password);
 
         // 2. 실제 검증 (사용자 비밀번호 체크)이 이루어지는 부분
-        // authenticate 매서드가 실행될 때 CustomUserDetailsService 에서 만든 loadUserByUsername 메서드가 실행
+        // authenticate 매서드가 실행될 때 UserDetailsServiceEX 에서 만든 loadUserByUsername 메서드가 실행
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
@@ -64,30 +55,41 @@ public class MemberService {
     }
 
     public MemberInfoResponse getInfo(String email) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다."));
-
+        Member member = findMemberByEmail(email);
         return new MemberInfoResponse(member.getEmail(), member.getName());
     }
 
-    // 회원 정보 수정
     @Transactional
     public void updateInfo(String email, MemberInfoRequest dto) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원이 존재하지 않습니다."));
+        Member member = findMemberByEmail(email);
+        updateMemberInfo(member, dto);
+    }
 
+    @Transactional
+    public void deleteInfo(String email) {
+        Member member = findMemberByEmail(email);
+        memberRepository.delete(member);
+    }
+
+    private Member createMember(String email, String password, String name, String birth) {
+        return Member.builder()
+                .email(email)
+                .password(encoder.encode(password))
+                .name(name)
+                .birth(birth)
+                .build();
+    }
+
+    private Member findMemberByEmail(String email) {
+        return memberRepository.findByEmail(email)
+                .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다."));
+    }
+
+    private void updateMemberInfo(Member member, MemberInfoRequest dto) {
         member.setName(dto.getName());
         member.setBirth(dto.getBirth());
         member.setEmail(dto.getEmail());
 
         memberRepository.save(member);
-    }
-
-    @Transactional
-    public void deleteInfo(String email) {
-        Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원이 존재하지 않습니다."));
-
-        memberRepository.delete(member);
     }
 }
