@@ -23,7 +23,7 @@ public class ReviewController {
     private final MemberRepository memberRepository;
 
     // 게시글 작성
-    @PostMapping("/member/review")
+    @PostMapping("/movie/review")
     public ResponseEntity<?> save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewRequest dto) {
         String email = userDetails.getUsername();
         Member member = memberRepository.findByEmail(email)
@@ -32,9 +32,8 @@ public class ReviewController {
         return ResponseEntity.ok("Post Success!");
     }
 
-
     // 게시글 조회
-    @GetMapping("/review/{reviewId}")
+    @GetMapping("/movie/review/{reviewId}")
     public ResponseEntity<?> getReview(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("reviewId") Long id) {
         String email = userDetails.getUsername();
         ReviewInfoResponse review = reviewService.getReview(email, id);
@@ -42,7 +41,7 @@ public class ReviewController {
     }
 
     // 게시글 수정
-    @PutMapping("/member/review/{reviewId}")
+    @PutMapping("/movie/review/{reviewId}")
     public ResponseEntity<?> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequest dto) {
         String email = userDetails.getUsername();
         reviewService.edit(email, reviewId, dto);
@@ -50,7 +49,7 @@ public class ReviewController {
     }
 
     // 게시글 삭제
-    @DeleteMapping("/member/review/{reviewId}")
+    @DeleteMapping("/movie/review/{reviewId}")
     public ResponseEntity<?> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("reviewId") Long reviewId) {
         String email = userDetails.getUsername();
         reviewService.delete(email, reviewId);

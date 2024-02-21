@@ -3,6 +3,7 @@ package miniproject.stellanex.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.domain.Member;
+import miniproject.stellanex.dto.MemberInfoRequest;
 import miniproject.stellanex.dto.MemberInfoResponse;
 import miniproject.stellanex.exception.AppException;
 import miniproject.stellanex.exception.ErrorCode;
@@ -15,6 +16,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
@@ -68,10 +70,24 @@ public class MemberService {
         return new MemberInfoResponse(member.getEmail(), member.getName());
     }
 
+    // 회원 정보 수정
+    @Transactional
+    public void updateInfo(String email, MemberInfoRequest dto) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원이 존재하지 않습니다."));
 
-//    public void updateInfo(String email, MemberInfoRequest dto) {
-//    }
-//
-//    public void deleteInfo(String email) {
-//    }
+        member.setName(dto.getName());
+        member.setBirth(dto.getBirth());
+        member.setEmail(dto.getEmail());
+
+        memberRepository.save(member);
+    }
+
+    @Transactional
+    public void deleteInfo(String email) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new IllegalArgumentException("해당 이메일의 회원이 존재하지 않습니다."));
+
+        memberRepository.delete(member);
+    }
 }

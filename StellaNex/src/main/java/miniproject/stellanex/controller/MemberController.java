@@ -1,10 +1,7 @@
 package miniproject.stellanex.controller;
 
 import lombok.RequiredArgsConstructor;
-import miniproject.stellanex.dto.JoinSuccessResponse;
-import miniproject.stellanex.dto.MemberInfoResponse;
-import miniproject.stellanex.dto.MemberJoinRequest;
-import miniproject.stellanex.dto.MemberLoginRequest;
+import miniproject.stellanex.dto.*;
 import miniproject.stellanex.jwt.JwtResponse;
 import miniproject.stellanex.service.MemberService;
 import org.springframework.http.ResponseEntity;
@@ -44,20 +41,20 @@ public class MemberController {
         MemberInfoResponse info = memberService.getInfo(email);
         return ResponseEntity.ok(info);
     }
-//    // 회원 정보 수정
-//    @PutMapping("/member/update")
-//    public ResponseEntity<Void> updateInfo(@AuthenticationPrincipal User user, @RequestBody MemberInfoRequest dto) {
-//        String email = user.getUsername();
-//        memberService.updateInfo(email, dto);
-//        return ResponseEntity.ok().build();
-//    }
-//
-//    // 회원 정보 삭제
-//    @DeleteMapping("/member/delete")
-//    public ResponseEntity<Void> deleteInfo(@AuthenticationPrincipal User user) {
-//        String email = user.getUsername();
-//        memberService.deleteInfo(email);
-//        return ResponseEntity.ok().build();
-//    }
+    // 회원 정보 수정
+    @PutMapping("/member/update")
+    public ResponseEntity<Void> updateInfo(@AuthenticationPrincipal User user, @RequestBody MemberInfoRequest dto) {
+        String email = user.getUsername();
+        memberService.updateInfo(email, dto);
+        return ResponseEntity.ok().build();
+    }
+
+    // 회원 정보 삭제
+    @DeleteMapping("/member/delete")
+    public ResponseEntity<Void> deleteInfo(@AuthenticationPrincipal User user) {
+        String email = user.getUsername();
+        memberService.deleteInfo(email);
+        return ResponseEntity.ok().build();
+    }
 
 }
