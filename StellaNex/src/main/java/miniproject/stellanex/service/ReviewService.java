@@ -14,7 +14,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.lang.module.FindException;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +38,7 @@ public class ReviewService {
                 .orElseThrow(() -> new NoSuchElementException("영화를 찾을 수 없습니다."));
 
         Review review = Review.builder()
-                .movie_id(movie)
+                .movie(movie)
                 .grade(grade)
                 .content(content)
                 .writer(member)
@@ -44,16 +47,20 @@ public class ReviewService {
         reviewRepository.save(review);
     }
 
-    @Transactional(readOnly = true)
-    public ReviewInfoResponse getReview(String email, Long id) {
-        Review review = reviewRepository.findById(id)
-                .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 게시물입니다."));
+    public List<ReviewInfoResponse> getAllReviewsByMovieId(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieId(movieId);
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        return ReviewInfoResponse.builder()
-                .content(review.getContent())
-                .writer(review.getWriter().getEmail())
-                .build();
+        return reviews.stream()
+                .map(review -> ReviewInfoResponse.builder()
+                        .grade(review.getGrade())
+                        .content(review.getContent())
+                        .writer(review.getWriter().getEmail())
+                        .date(review.getDate().format(formatter))
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
     @Transactional
     public void edit(String email, Long reviewId, ReviewRequest dto) {
@@ -63,7 +70,6 @@ public class ReviewService {
         // 리뷰의 내용을 업데이트
         review.updateContent(dto.getContent());
     }
-
 
     @Transactional
     public void delete(String email, Long reviewId) {

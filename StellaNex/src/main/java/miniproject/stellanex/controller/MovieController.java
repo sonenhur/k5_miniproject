@@ -34,6 +34,4 @@ public class MovieController {
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
         return ResponseEntity.ok(movie);
     }
-
-
 }

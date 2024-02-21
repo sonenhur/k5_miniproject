@@ -16,11 +16,11 @@ import java.time.LocalDateTime;
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "review_id")
-    private Long id;
+    private Long review_id;
 
     @Builder.Default
     private LocalDateTime date = LocalDateTime.now();
+
     @Column(nullable = false)
     private int grade;
 
@@ -33,7 +33,7 @@ public class Review {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "movie_id")
-    private Movie movie_id;
+    private Movie movie;
 
     public void updateContent(String content) {
         this.content = content;
