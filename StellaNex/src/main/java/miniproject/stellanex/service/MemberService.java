@@ -69,4 +69,9 @@ public class MemberService {
     }
 
 
+//    public void updateInfo(String email, MemberInfoRequest dto) {
+//    }
+//
+//    public void deleteInfo(String email) {
+//    }
 }

@@ -10,4 +10,10 @@ import lombok.Getter;
 public class ReviewRequest {
     private int grade;
     private String content;
+    private Long movie_id;
+
+    public Long getMovieId() {
+        return movie_id;
+    }
+
 }

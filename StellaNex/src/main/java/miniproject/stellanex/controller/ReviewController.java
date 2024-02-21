@@ -27,10 +27,11 @@ public class ReviewController {
     public ResponseEntity<?> save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewRequest dto) {
         String email = userDetails.getUsername();
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
-        reviewService.save(member.getEmail(), dto.getGrade(), dto.getContent());
-        return ResponseEntity.ok("게시 성공!");
+                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+        reviewService.save(member.getEmail(), dto.getMovieId(), dto.getGrade(), dto.getContent());
+        return ResponseEntity.ok("Post Success!");
     }
+
 
     // 게시글 조회
     @GetMapping("/review/{reviewId}")

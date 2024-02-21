@@ -7,6 +7,7 @@ import miniproject.stellanex.persistence.MovieRepository;
 import org.springframework.stereotype.Service;
 
 import java.sql.Date;
+import java.time.LocalDate;
 
 @Service
 @RequiredArgsConstructor
@@ -14,7 +15,7 @@ import java.sql.Date;
 public class MovieService {
     private final MovieRepository movieRepository;
 
-    public void save(String title, Date releaseDate, String runningTime, String age_rating, String genre, String synopsis, String director, String casts) {
+    public void save(String title, LocalDate releaseDate, String runningTime, String age_rating, String genre, String synopsis, String director, String casts) {
         Movie movie = Movie.builder()
                 .title(title)
                 .release_date(releaseDate)
