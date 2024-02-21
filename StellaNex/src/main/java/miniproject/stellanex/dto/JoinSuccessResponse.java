@@ -17,7 +17,7 @@ public class JoinSuccessResponse {
     public static JoinSuccessResponse toDto() {
         return JoinSuccessResponse.builder()
                 .status(200)
-                .message("회원가입 성공!")
+                .message("Join Success!")
                 .build();
     }
 }

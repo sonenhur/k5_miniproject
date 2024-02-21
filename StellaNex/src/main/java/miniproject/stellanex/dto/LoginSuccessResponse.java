@@ -17,7 +17,7 @@ public class LoginSuccessResponse {
     public static LoginSuccessResponse toDto() {
         return LoginSuccessResponse.builder()
                 .status(200)
-                .message("로그인 성공!")
+                .message("Login Success!")
                 .build();
     }
 }

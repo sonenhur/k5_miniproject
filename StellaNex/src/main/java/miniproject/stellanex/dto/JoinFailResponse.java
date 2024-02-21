@@ -14,7 +14,7 @@ public class JoinFailResponse {
     public static JoinFailResponse toDto() {
         return JoinFailResponse.builder()
                 .status(400)
-                .message("Failed!")
+                .message("Join Failed!")
                 .build();
     }
 }

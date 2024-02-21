@@ -17,7 +17,7 @@ public class LoginFailResponse {
     public static LoginFailResponse toDto() {
         return LoginFailResponse.builder()
                 .status(400)
-                .message("Failed!")
+                .message("Login Failed!")
                 .build();
     }
 }

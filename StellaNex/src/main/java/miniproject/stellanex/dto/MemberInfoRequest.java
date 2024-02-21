@@ -10,5 +10,4 @@ public class MemberInfoRequest {
     private String birth;
     private String password;
     private String email;
-    // 추가적인 필드가 있다면 여기에 추가합니다.
 }

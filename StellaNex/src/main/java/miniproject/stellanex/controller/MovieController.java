@@ -17,19 +17,20 @@ import java.util.NoSuchElementException;
 @RequiredArgsConstructor
 @Slf4j
 public class MovieController {
+
     private final MovieService movieService;
     private final MovieRepository movieRepository;
 
-    // 영화 정보 입력
     @PostMapping("/movie/post")
-    public ResponseEntity<?> save(@RequestBody MovieInputRequest dto) {
+    public ResponseEntity<String> save(@RequestBody MovieInputRequest dto) {
         movieService.save(dto.getTitle(), dto.getRelease_date(), dto.getRunning_time(), dto.getAge_rating(), dto.getGenre(), dto.getSynopsis(), dto.getDirector(), dto.getCasts());
-        return ResponseEntity.ok("posting success!");
+        log.info("새 영화 정보가 성공적으로 등록되었습니다: {}", dto.getTitle());
+        return ResponseEntity.ok("게시 성공!");
     }
 
-    // 영화 정보 조회
     @GetMapping("/movie/{movieId}")
-    public ResponseEntity<?> getInfo(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId) {
+    public ResponseEntity<Movie> getInfo(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId) {
+        log.info("영화 정보 조회: {}", movieId);
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
         return ResponseEntity.ok(movie);

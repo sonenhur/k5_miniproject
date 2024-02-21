@@ -9,7 +9,6 @@ import miniproject.stellanex.dto.ReviewRequest;
 import miniproject.stellanex.persistence.MemberRepository;
 import miniproject.stellanex.persistence.MovieRepository;
 import miniproject.stellanex.service.ReviewService;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -28,50 +27,38 @@ public class ReviewController {
     private final MemberRepository memberRepository;
     private final MovieRepository movieRepository;
 
-    // 리뷰 작성
     @PostMapping("/movie/review")
-    public ResponseEntity<?> save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewRequest dto) {
+    public ResponseEntity<Void> save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewRequest dto) {
         String email = userDetails.getUsername();
         Member member = memberRepository.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("Member Not Found"));
+                .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
         reviewService.save(member.getEmail(), dto.getMovieId(), dto.getGrade(), dto.getContent());
-        return ResponseEntity.ok("Post Success!");
+        log.info("사용자 {}가 리뷰를 성공적으로 저장했습니다.", email);
+        return ResponseEntity.ok().build();
     }
 
-//    // 리뷰 조회
-//    @GetMapping("/movie/review/{movieId}")
-//    public ResponseEntity<?> getReview(@PathVariable Long movieId) {
-//        Movie movie = movieRepository.findById(movieId)
-//                .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
-//        ReviewInfoResponse review = reviewService.getReview(movieId);
-//        return new ResponseEntity<>(review, HttpStatus.OK);
-//    }
-
-    // 리뷰 조회
     @GetMapping("/movie/review/{movieId}")
     public ResponseEntity<?> getReviews(@PathVariable Long movieId) {
-        System.out.println("get reviews");
+        log.info("{} 번 영화의 리뷰를 가져오는 중입니다.", movieId);
         Movie movie = movieRepository.findById(movieId)
                 .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
         List<ReviewInfoResponse> reviews = reviewService.getAllReviewsByMovieId(movieId);
-        return new ResponseEntity<>(reviews, HttpStatus.OK);
-
+        return ResponseEntity.ok(reviews);
     }
 
-
-    // 리뷰 수정
     @PutMapping("/movie/review/{reviewId}")
-    public ResponseEntity<?> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("reviewId") Long reviewId, @RequestBody ReviewRequest dto) {
+    public ResponseEntity<Void> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId, @RequestBody ReviewRequest dto) {
         String email = userDetails.getUsername();
         reviewService.edit(email, reviewId, dto);
-        return new ResponseEntity<>(HttpStatus.OK);
+        log.info("사용자 {}가 ID {}의 리뷰를 성공적으로 수정했습니다.", email, reviewId);
+        return ResponseEntity.ok().build();
     }
 
-    // 게시글 삭제
     @DeleteMapping("/movie/review/{reviewId}")
-    public ResponseEntity<?> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable("reviewId") Long reviewId) {
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId) {
         String email = userDetails.getUsername();
         reviewService.delete(email, reviewId);
-        return new ResponseEntity<>(HttpStatus.OK);
+        log.info("사용자 {}가 ID {}의 리뷰를 성공적으로 삭제했습니다.", email, reviewId);
+        return ResponseEntity.ok().build();
     }
 }
