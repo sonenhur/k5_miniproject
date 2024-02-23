@@ -22,6 +22,7 @@ public class MovieController {
     private final MovieService movieService;
     private final MovieRepository movieRepository;
 
+
     @PostMapping("/movie/post")
     public ResponseEntity<?> save(@RequestBody MovieInputRequest dto) {
         try {
@@ -30,7 +31,7 @@ public class MovieController {
             return ResponseEntity.ok("게시 성공!");
         } catch (Exception e) {
             log.error("영화 정보 게시 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("게시 실패: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Post Failed: " + e.getMessage());
         }
     }
 
@@ -39,11 +40,11 @@ public class MovieController {
         try {
             log.info("영화 정보 조회: {}", movieId);
             Movie movie = movieRepository.findById(movieId)
-                    .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
+                    .orElseThrow(() -> new NoSuchElementException("Movie ID Not Found"));
             return ResponseEntity.ok(movie);
         } catch (NoSuchElementException e) {
             log.error("영화 정보 조회 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("영화를 찾을 수 없습니다.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Movie Not Found");
         } catch (Exception e) {
             log.error("영화 정보 조회 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 실패: " + e.getMessage());

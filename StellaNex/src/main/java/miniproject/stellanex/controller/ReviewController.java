@@ -48,12 +48,38 @@ public class ReviewController {
     }
 
     @GetMapping("/movie/review/{movieId}")
-    public ResponseEntity<?> getReviews(@PathVariable Long movieId) {
+    public ResponseEntity<?> getReviews(@PathVariable Long movieId, @RequestParam(required = false) String ordertype, @RequestParam(required = false) String order) {
         try {
             log.info("{} 번 영화의 리뷰를 가져오는 중입니다.", movieId);
             Movie movie = movieRepository.findById(movieId)
                     .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
-            List<ReviewInfoResponse> reviews = reviewService.getAllReviewsByMovieId(movieId);
+            List<ReviewInfoResponse> reviews;
+
+            // 기본적으로는 오름차순으로 정렬
+            if (ordertype == null || order == null) {
+                reviews = reviewService.getAllReviewsByMovieId(movieId);
+            } else {
+                // ordertype 및 order에 따라 정렬 방식을 결정
+                if ("grade".equals(ordertype)) {
+                    // rating을 기준으로 정렬
+                    if ("asc".equals(order)) {
+                        reviews = reviewService.getAllReviewsByMovieIdOrderByRatingAsc(movieId);
+                    } else {
+                        reviews = reviewService.getAllReviewsByMovieIdOrderByRatingDesc(movieId);
+                    }
+                } else if ("date".equals(ordertype)) {
+                    // date를 기준으로 정렬
+                    if ("asc".equals(order)) {
+                        reviews = reviewService.getAllReviewsByMovieIdOrderByDateAsc(movieId);
+                    } else {
+                        reviews = reviewService.getAllReviewsByMovieIdOrderByDateDesc(movieId);
+                    }
+                } else {
+                    // 유효하지 않은 정렬 기준이면 기본적으로 오름차순으로 정렬
+                    reviews = reviewService.getAllReviewsByMovieId(movieId);
+                }
+            }
+
             return ResponseEntity.ok(reviews);
         } catch (NoSuchElementException e) {
             log.error("영화를 찾을 수 없습니다: {}", e.getMessage());
@@ -63,6 +89,7 @@ public class ReviewController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PutMapping("/movie/review/{reviewId}")
     public ResponseEntity<Void> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId, @RequestBody ReviewRequest dto) {

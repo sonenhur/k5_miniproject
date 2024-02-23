@@ -2,10 +2,7 @@ package miniproject.stellanex.controller;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import miniproject.stellanex.dto.MemberInfoRequest;
-import miniproject.stellanex.dto.MemberInfoResponse;
-import miniproject.stellanex.dto.MemberJoinRequest;
-import miniproject.stellanex.dto.MemberLoginRequest;
+import miniproject.stellanex.dto.*;
 import miniproject.stellanex.jwt.JwtResponse;
 import miniproject.stellanex.service.MemberService;
 import org.springframework.http.HttpStatus;
@@ -27,13 +24,14 @@ public class MemberController {
         try {
             memberService.join(dto.getEmail(), dto.getPassword(), dto.getName(), dto.getBirth());
             log.info("사용자 {} 가입 성공", dto.getEmail());
-            return ResponseEntity.ok()
-                    .body("가입 성공!");
+
+            JoinSuccessResponse response = JoinSuccessResponse.toDto();
+            return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             log.error("가입 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("가입 실패!");
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
+
     }
 
     @PostMapping("/member/login")
@@ -43,17 +41,17 @@ public class MemberController {
             log.info("사용자 {} 로그인 성공", dto.getEmail());
             return ResponseEntity.ok()
                     .header("Authorization", "Bearer " + token.getAccessToken())
-                    .body("로그인 성공!");
+                    .body("success!");
         } catch (Exception e) {
             log.error("로그인 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("로그인 실패!");
+                    .body("failed!");
         }
     }
 
 
     @GetMapping("/member/mypage")
-    public ResponseEntity<?> getInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<MemberInfoResponse> getInfo(@AuthenticationPrincipal User user) {
         try {
             String email = user.getUsername();
             MemberInfoResponse info = memberService.getInfo(email);
@@ -64,6 +62,7 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
+
 
     @PutMapping("/member/update")
     public ResponseEntity<?> updateInfo(@AuthenticationPrincipal User user, @RequestBody MemberInfoRequest dto) {

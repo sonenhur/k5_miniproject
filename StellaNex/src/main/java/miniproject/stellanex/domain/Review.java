@@ -24,7 +24,7 @@ public class Review {
     @Column(nullable = false)
     private int grade;
 
-    @Column(nullable = false, length = 10000)
+    @Column(nullable = false, length = 30)
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

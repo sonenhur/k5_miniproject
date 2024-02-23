@@ -56,6 +56,9 @@ public class MemberService {
 
     public MemberInfoResponse getInfo(String email) {
         Member member = findMemberByEmail(email);
+        if (member == null) {
+            throw new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다.");
+        }
         return new MemberInfoResponse(member.getEmail(), member.getName());
     }
 
@@ -89,7 +92,6 @@ public class MemberService {
         member.setName(dto.getName());
         member.setBirth(dto.getBirth());
         member.setEmail(dto.getEmail());
-
         memberRepository.save(member);
     }
 }

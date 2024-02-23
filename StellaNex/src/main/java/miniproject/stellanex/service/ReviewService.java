@@ -87,4 +87,36 @@ public class ReviewService {
         }
         reviewRepository.deleteById(reviewId);
     }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingAsc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeAsc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingDesc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeDesc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateAsc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateAsc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateDesc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateDesc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    private List<ReviewInfoResponse> mapReviewsToResponse(List<Review> reviews) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return reviews.stream()
+                .map(review -> ReviewInfoResponse.builder()
+                        .grade(review.getGrade())
+                        .content(review.getContent())
+                        .writer(review.getWriter().getEmail())
+                        .date(review.getDate().format(formatter))
+                        .build())
+                .collect(Collectors.toList());
+    }
 }
