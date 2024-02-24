@@ -42,19 +42,16 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    CorsConfigurationSource corsConfigurationSource() {
-
-        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+    private CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.addAllowedOrigin("http://localhost:3000");
-        config.addAllowedOrigin("http://192.168.0.26/:3000");
-        config.addAllowedOrigin("http://127.0.0.1:3000");
-        config.addAllowedMethod("*"); // 교차를 허용할 Method
-        config.addAllowedHeader("*"); // 교차를 허용할 Header
-        config.addExposedHeader("*");
+        config.addAllowedMethod(CorsConfiguration.ALL); // 요청을 허용할 Method
+        config.addAllowedHeader(CorsConfiguration.ALL); // 요청을 허용할 Header
         config.setAllowCredentials(true); // 요청/응답에 자격증명정보 포함을 허용
-        source.registerCorsConfiguration("/**", config);
+        // true인 경우 addAllowedOrigin(“*”)는 사용 불가 ➔ Pattern으로 변경
+        config.addAllowedOriginPattern(CorsConfiguration.ALL); // 요청을 허용할 서버
+        config.addExposedHeader(CorsConfiguration.ALL);
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config); // 위 설정을 적용할 Rest 서버의 URL 패턴 설정
         return source;
     }
 }

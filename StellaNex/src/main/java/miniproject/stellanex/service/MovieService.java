@@ -18,6 +18,7 @@ public class MovieService {
 
         // 가져온 데이터를 기반으로 Movie 객체 생성 및 저장
         Movie movie = Movie.builder()
+
                 .title(title)
                 .release_date(releaseDate)
                 .running_time(runningTime)

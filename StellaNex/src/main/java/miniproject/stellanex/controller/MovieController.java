@@ -12,6 +12,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -32,6 +33,18 @@ public class MovieController {
         } catch (Exception e) {
             log.error("영화 정보 게시 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Post Failed: " + e.getMessage());
+        }
+    }
+
+    @GetMapping("/movie")
+    public ResponseEntity<?> getAllMovies() {
+        try {
+            log.info("전체 영화 목록 조회");
+            List<Movie> movies = movieRepository.findAll();
+            return ResponseEntity.ok(movies);
+        } catch (Exception e) {
+            log.error("전체 영화 목록 조회 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("조회 실패: " + e.getMessage());
         }
     }
 

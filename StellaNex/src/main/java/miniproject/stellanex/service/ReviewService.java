@@ -51,6 +51,7 @@ public class ReviewService {
 
         return reviews.stream()
                 .map(review -> ReviewInfoResponse.builder()
+                        .review_id(review.getReview_id())
                         .grade(review.getGrade())
                         .content(review.getContent())
                         .writer(review.getWriter().getEmail())

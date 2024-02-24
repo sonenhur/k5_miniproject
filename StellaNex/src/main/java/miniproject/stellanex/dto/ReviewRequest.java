@@ -11,6 +11,9 @@ public class ReviewRequest {
     private int grade;
     private String content;
     private Long movie_id;
+    private Long review_id;
+    private String date;
+    private String writer;
 
     public Long getMovieId() {
         return movie_id;

@@ -12,8 +12,10 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @NoArgsConstructor
 public class ReviewInfoResponse {
+    private Long review_id;
     private String date;
+    private int grade;
     private String content;
     private String writer;
-    private int grade;
+
 }
