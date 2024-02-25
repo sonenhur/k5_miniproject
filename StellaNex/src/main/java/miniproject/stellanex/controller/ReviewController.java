@@ -29,13 +29,13 @@ public class ReviewController {
     private final MemberRepository memberRepository;
     private final MovieRepository movieRepository;
 
-    @PostMapping("/movie/review")
-    public ResponseEntity<Void> save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody ReviewRequest dto) {
+    @PostMapping("/movie/review/{movieId}")
+    public ResponseEntity<Void> save(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId, @RequestBody ReviewRequest dto) {
         try {
             String email = userDetails.getUsername();
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
-            reviewService.save(member.getEmail(), dto.getMovieId(), dto.getGrade(), dto.getContent());
+            reviewService.save(member.getEmail(), movieId, dto.getGrade(), dto.getContent());
             log.info("사용자 {}가 리뷰를 성공적으로 저장했습니다.", email);
             return ResponseEntity.ok().build();
         } catch (UsernameNotFoundException e) {

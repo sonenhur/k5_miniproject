@@ -1,6 +1,7 @@
 package miniproject.stellanex.exception;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
