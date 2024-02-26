@@ -120,4 +120,9 @@ public class ReviewService {
                         .build())
                 .collect(Collectors.toList());
     }
+
+    public void deleteReviewsByEmail(String email) {
+        reviewRepository.deleteByEmail(email);
+
+    }
 }

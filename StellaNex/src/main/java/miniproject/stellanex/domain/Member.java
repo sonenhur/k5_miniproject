@@ -34,6 +34,6 @@ public class Member {
     @Builder.Default
     private LocalDateTime registered = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "writer", fetch = FetchType.LAZY, orphanRemoval = false)
     private List<Review> reviewList = new ArrayList<>();
 }

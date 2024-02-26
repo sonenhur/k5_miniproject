@@ -63,12 +63,6 @@ public class MemberService {
     }
 
     @Transactional
-    public void updateInfo(String email, MemberInfoRequest dto) {
-        Member member = findMemberByEmail(email);
-        updateMemberInfo(member, dto);
-    }
-
-    @Transactional
     public void deleteInfo(String email) {
         Member member = findMemberByEmail(email);
         memberRepository.delete(member);
@@ -88,10 +82,21 @@ public class MemberService {
                 .orElseThrow(() -> new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다."));
     }
 
-    private void updateMemberInfo(Member member, MemberInfoRequest dto) {
-        member.setName(dto.getName());
-        member.setBirth(dto.getBirth());
-        member.setEmail(dto.getEmail());
+    public void updatePassword(String email, String newPassword) {
+        Member member = memberRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("해당 이메일을 가진 사용자를 찾을 수 없습니다."));
+
+        // 새로운 비밀번호 암호화
+        String encodedPassword = encoder.encode(newPassword);
+
+        // 암호화된 비밀번호로 업데이트
+        member.setPassword(encodedPassword);
+
+        // 변경된 정보 저장
         memberRepository.save(member);
+    }
+
+    public void deleteMemberByEmail(String email) {
+        memberRepository.deleteByEmail(email);
     }
 }

@@ -21,4 +21,7 @@ public interface ReviewRepository extends JpaRepository<Review, Long> {
 
     @Query("SELECT r FROM Review r WHERE r.movie.movie_id = :movieId ORDER BY r.date DESC")
     List<Review> findByMovieIdOrderByDateDesc(Long movieId);
+
+    @Query("DELETE FROM Review r WHERE r.writer.email = :email")
+    void deleteByEmail(String email);
 }

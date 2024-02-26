@@ -5,11 +5,15 @@ import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.dto.*;
 import miniproject.stellanex.jwt.JwtResponse;
 import miniproject.stellanex.service.MemberService;
+import miniproject.stellanex.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequiredArgsConstructor
@@ -18,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 public class MemberController {
 
     private final MemberService memberService;
+    private final ReviewService reviewService;
 
     @PostMapping("/member/join")
     public ResponseEntity<?> join(@RequestBody MemberJoinRequest dto) {
@@ -39,13 +44,10 @@ public class MemberController {
         try {
             JwtResponse token = memberService.login(dto.getEmail(), dto.getPassword());
             log.info("사용자 {} 로그인 성공", dto.getEmail());
-            return ResponseEntity.ok()
-                    .header("Authorization", "Bearer " + token.getAccessToken())
-                    .body("success!");
+            return ResponseEntity.ok().header("Authorization", "Bearer " + token.getAccessToken()).body("success!");
         } catch (Exception e) {
             log.error("로그인 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
-                    .body("failed!");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("failed!");
         }
     }
 
@@ -68,25 +70,29 @@ public class MemberController {
     public ResponseEntity<?> updateInfo(@AuthenticationPrincipal User user, @RequestBody MemberInfoRequest dto) {
         try {
             String email = user.getUsername();
-            memberService.updateInfo(email, dto);
-            log.info("사용자 {} 정보 수정", email);
-            return ResponseEntity.ok().build();
+            memberService.updatePassword(email, dto.getPassword());
+            log.info("사용자 {} 비밀번호 변경", email);
+            return ResponseEntity.ok().body(Map.of("message", "비밀번호가 성공적으로 변경되었습니다."));
         } catch (Exception e) {
-            log.error("사용자 정보 수정 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("사용자 비밀번호 변경 실패: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", "비밀번호 변경에 실패하였습니다."));
         }
     }
 
+    @Transactional
     @DeleteMapping("/member/delete")
-    public ResponseEntity<?> deleteInfo(@AuthenticationPrincipal User user) {
+    public ResponseEntity<?> deleteMember(@AuthenticationPrincipal User user) {
         try {
             String email = user.getUsername();
-            memberService.deleteInfo(email);
+            // REVIEW 테이블에서 회원의 모든 리뷰 삭제
+//        reviewService.deleteReviewsByEmail(email);
+            // MEMBER 테이블에서 회원 삭제
+            memberService.deleteMemberByEmail(email);
             log.info("사용자 {} 정보 삭제", email);
-            return ResponseEntity.ok().build();
+            return ResponseEntity.ok("delete success");
         } catch (Exception e) {
-            log.error("사용자 정보 삭제 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            log.error("회원 정보 삭제 중 오류 발생: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("회원 정보 삭제 중 오류가 발생했습니다: " + e.getMessage());
         }
     }
 }
