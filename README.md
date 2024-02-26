@@ -5,3 +5,4 @@
 - 2024-02-23  review 등급별, 일자별 정렬이 가능하도록 @Query 어노테이션 추가
 - 2024-02-24  cors필터 유형 변경, review 수정 요청시 입력받는 값 조정
 - 2024-02-25  member @PostMapping 요청시 입력받는 값 조정
+- 2024-02-26 member DELETE 삭제 시도시 Review FK에 묶여 삭제되지 않는 현상 발생 (미해결)
