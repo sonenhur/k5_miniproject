@@ -5,7 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.dto.*;
 import miniproject.stellanex.jwt.JwtResponse;
 import miniproject.stellanex.service.MemberService;
-import miniproject.stellanex.service.ReviewService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -22,7 +21,6 @@ import java.util.Map;
 public class MemberController {
 
     private final MemberService memberService;
-    private final ReviewService reviewService;
 
     @PostMapping("/member/join")
     public ResponseEntity<?> join(@RequestBody MemberJoinRequest dto) {
@@ -36,7 +34,6 @@ public class MemberController {
             log.error("가입 실패: {}", e.getMessage());
             return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
         }
-
     }
 
     @PostMapping("/member/login")
@@ -50,7 +47,6 @@ public class MemberController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("failed!");
         }
     }
-
 
     @GetMapping("/member/mypage")
     public ResponseEntity<MemberInfoResponse> getInfo(@AuthenticationPrincipal User user) {

@@ -30,7 +30,7 @@ public class JwtProvider {
     public JwtResponse createToken(Authentication authentication) {
         long now = System.currentTimeMillis();
 
-        Date expirationTime = new Date(now + 43200000); // 12 hours
+        Date expirationTime = new Date(now + 86400000); // 24 hours
 
         String accessToken = Jwts.builder()
                 .setSubject(authentication.getName())
@@ -50,7 +50,7 @@ public class JwtProvider {
 
         User principal = new User(claims.getSubject(), "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER")));
 
-        return new UsernamePasswordAuthenticationToken(principal, "", Collections.singletonList(new SimpleGrantedAuthority("ROLE_MEMBER")));
+        return new UsernamePasswordAuthenticationToken(principal, "", principal.getAuthorities());
     }
 
     public boolean validateToken(String token) {

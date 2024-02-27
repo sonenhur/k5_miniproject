@@ -51,6 +51,8 @@ public class MemberService {
         // 3. 인증 정보를 기반으로 JWT 토큰 생성
         JwtResponse token = jwtProvider.createToken(authentication);
 
+        log.info("token:{}",token);
+
         return token;
     }
 

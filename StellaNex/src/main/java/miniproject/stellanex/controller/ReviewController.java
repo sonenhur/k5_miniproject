@@ -18,6 +18,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 @RestController
@@ -30,56 +31,31 @@ public class ReviewController {
     private final MovieRepository movieRepository;
 
     @PostMapping("/movie/review/{movieId}")
-    public ResponseEntity<Void> save(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId, @RequestBody ReviewRequest dto) {
+    public ResponseEntity<?> saveReview(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long movieId, @RequestBody ReviewRequest dto) {
         try {
             String email = userDetails.getUsername();
             Member member = memberRepository.findByEmail(email)
                     .orElseThrow(() -> new UsernameNotFoundException("회원을 찾을 수 없습니다."));
-            reviewService.save(member.getEmail(), movieId, dto.getGrade(), dto.getContent());
+            reviewService.save(member.getEmail(), movieId, dto.getGrade(), dto.getContent(), dto.getReview_id());
             log.info("사용자 {}가 리뷰를 성공적으로 저장했습니다.", email);
             return ResponseEntity.ok().build();
         } catch (UsernameNotFoundException e) {
             log.error("회원을 찾을 수 없습니다: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("error", "회원을 찾을 수 없습니다."));
         } catch (Exception e) {
             log.error("리뷰 저장 실패: {}", e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", "작성에 실패하였습니다."));
         }
     }
 
     @GetMapping("/movie/review/{movieId}")
-    public ResponseEntity<?> getAllReviewsByMovieId(@PathVariable Long movieId, @RequestParam(required = false) String ordertype, @RequestParam(required = false) String order) {
+    public ResponseEntity<?> getAllReviewsByMovieId(@PathVariable("movieId")
+                                                    Long movieId, @RequestParam(required = false) String ordertype, @RequestParam(required = false) String order) {
         try {
             log.info("{} 번 영화의 리뷰를 가져오는 중입니다.", movieId);
             Movie movie = movieRepository.findById(movieId)
                     .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
-            List<ReviewInfoResponse> reviews;
-
-            // 기본적으로는 오름차순으로 정렬
-            if (ordertype == null || order == null) {
-                reviews = reviewService.getAllReviewsByMovieId(movieId);
-            } else {
-                // ordertype 및 order에 따라 정렬 방식을 결정
-                if ("grade".equals(ordertype)) {
-                    // rating을 기준으로 정렬
-                    if ("asc".equals(order)) {
-                        reviews = reviewService.getAllReviewsByMovieIdOrderByRatingAsc(movieId);
-                    } else {
-                        reviews = reviewService.getAllReviewsByMovieIdOrderByRatingDesc(movieId);
-                    }
-                } else if ("date".equals(ordertype)) {
-                    // date를 기준으로 정렬
-                    if ("asc".equals(order)) {
-                        reviews = reviewService.getAllReviewsByMovieIdOrderByDateAsc(movieId);
-                    } else {
-                        reviews = reviewService.getAllReviewsByMovieIdOrderByDateDesc(movieId);
-                    }
-                } else {
-                    // 유효하지 않은 정렬 기준이면 기본적으로 오름차순으로 정렬
-                    reviews = reviewService.getAllReviewsByMovieId(movieId);
-                }
-            }
-
+            List<ReviewInfoResponse> reviews = getSortedReviews(ordertype, order, movieId);
             return ResponseEntity.ok(reviews);
         } catch (NoSuchElementException e) {
             log.error("영화를 찾을 수 없습니다: {}", e.getMessage());
@@ -90,9 +66,8 @@ public class ReviewController {
         }
     }
 
-
     @PutMapping("/movie/review/{reviewId}")
-    public ResponseEntity<Void> edit(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId, @RequestBody ReviewRequest dto) {
+    public ResponseEntity<Void> editReview(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId, @RequestBody ReviewRequest dto) {
         try {
             String email = userDetails.getUsername();
             reviewService.edit(email, reviewId, dto);
@@ -108,7 +83,7 @@ public class ReviewController {
     }
 
     @DeleteMapping("/movie/review/{reviewId}")
-    public ResponseEntity<Void> delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId) {
+    public ResponseEntity<Void> deleteReview(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long reviewId) {
         try {
             String email = userDetails.getUsername();
             reviewService.delete(email, reviewId);
@@ -121,5 +96,21 @@ public class ReviewController {
             log.error("리뷰 삭제 실패: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private List<ReviewInfoResponse> getSortedReviews(String ordertype, String order, Long movieId) {
+        List<ReviewInfoResponse> reviews;
+        if (ordertype == null || order == null) {
+            reviews = reviewService.getAllReviewsByMovieId(movieId);
+        } else {
+            reviews = switch (ordertype) {
+                case "grade" -> "asc".equals(order) ? reviewService.getAllReviewsByMovieIdOrderByRatingAsc(movieId) :
+                        reviewService.getAllReviewsByMovieIdOrderByRatingDesc(movieId);
+                case "date" -> "asc".equals(order) ? reviewService.getAllReviewsByMovieIdOrderByDateAsc(movieId) :
+                        reviewService.getAllReviewsByMovieIdOrderByDateDesc(movieId);
+                default -> reviewService.getAllReviewsByMovieId(movieId);
+            };
+        }
+        return reviews;
     }
 }

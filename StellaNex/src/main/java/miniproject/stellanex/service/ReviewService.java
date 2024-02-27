@@ -28,7 +28,7 @@ public class ReviewService {
     private final MemberRepository memberRepository;
     private final MovieRepository movieRepository;
 
-    public void save(String email, Long movie_id, int grade, String content) {
+    public void save(String email, Long movie_id, int grade, String content, Long reviewId) {
         Member member = memberRepository.findByEmail(email)
                 .orElseThrow(() -> new UsernameNotFoundException("존재하지 않는 유저입니다."));
 
@@ -60,6 +60,25 @@ public class ReviewService {
                 .collect(Collectors.toList());
     }
 
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingAsc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeAsc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingDesc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeDesc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateAsc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateAsc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
+
+    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateDesc(Long movieId) {
+        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateDesc(movieId);
+        return mapReviewsToResponse(reviews);
+    }
 
     @Transactional
     public void edit(String email, Long reviewId, ReviewRequest dto) {
@@ -89,30 +108,11 @@ public class ReviewService {
         reviewRepository.deleteById(reviewId);
     }
 
-    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingAsc(Long movieId) {
-        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeAsc(movieId);
-        return mapReviewsToResponse(reviews);
-    }
-
-    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByRatingDesc(Long movieId) {
-        List<Review> reviews = reviewRepository.findByMovieIdOrderByGradeDesc(movieId);
-        return mapReviewsToResponse(reviews);
-    }
-
-    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateAsc(Long movieId) {
-        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateAsc(movieId);
-        return mapReviewsToResponse(reviews);
-    }
-
-    public List<ReviewInfoResponse> getAllReviewsByMovieIdOrderByDateDesc(Long movieId) {
-        List<Review> reviews = reviewRepository.findByMovieIdOrderByDateDesc(movieId);
-        return mapReviewsToResponse(reviews);
-    }
-
     private List<ReviewInfoResponse> mapReviewsToResponse(List<Review> reviews) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
         return reviews.stream()
                 .map(review -> ReviewInfoResponse.builder()
+                        .review_id(review.getReview_id())
                         .grade(review.getGrade())
                         .content(review.getContent())
                         .writer(review.getWriter().getEmail())
