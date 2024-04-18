@@ -3,7 +3,6 @@ package miniproject.stellanex.controller;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.domain.Member;
-import miniproject.stellanex.domain.Movie;
 import miniproject.stellanex.dto.ReviewInfoResponse;
 import miniproject.stellanex.dto.ReviewRequest;
 import miniproject.stellanex.exception.UnauthorizedException;
@@ -53,7 +52,7 @@ public class ReviewController {
                                                     Long movieId, @RequestParam(required = false) String ordertype, @RequestParam(required = false) String order) {
         try {
             log.info("{} 번 영화의 리뷰를 가져오는 중입니다.", movieId);
-            Movie movie = movieRepository.findById(movieId)
+            movieRepository.findById(movieId)
                     .orElseThrow(() -> new NoSuchElementException("해당 ID의 영화를 찾을 수 없습니다."));
             List<ReviewInfoResponse> reviews = getSortedReviews(ordertype, order, movieId);
             return ResponseEntity.ok(reviews);

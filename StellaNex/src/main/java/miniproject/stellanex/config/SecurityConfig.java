@@ -2,7 +2,6 @@ package miniproject.stellanex.config;
 
 import miniproject.stellanex.config.filter.JWTAuthorizationFilter;
 import miniproject.stellanex.jwt.JwtProvider;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,8 +18,11 @@ import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    @Autowired
-    private JwtProvider jwtProvider;
+    private final JwtProvider jwtProvider;
+
+    public SecurityConfig(JwtProvider jwtProvider) {
+        this.jwtProvider = jwtProvider;
+    }
 
     @Bean
     SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {

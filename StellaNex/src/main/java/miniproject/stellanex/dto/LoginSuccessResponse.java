@@ -14,10 +14,4 @@ public class LoginSuccessResponse {
     private int status;
     private String message;
 
-    public static LoginSuccessResponse toDto() {
-        return LoginSuccessResponse.builder()
-                .status(200)
-                .message("Login Success!")
-                .build();
-    }
 }

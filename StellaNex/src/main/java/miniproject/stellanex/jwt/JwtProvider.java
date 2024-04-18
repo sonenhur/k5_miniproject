@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 import java.security.Key;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Objects;
 
 @Component
 @Slf4j
@@ -23,7 +24,7 @@ public class JwtProvider {
     private final Key key;
 
     public JwtProvider(Environment env) {
-        byte[] keyBytes = env.getProperty("jwt.token.secret").getBytes();
+        byte[] keyBytes = Objects.requireNonNull(env.getProperty("jwt.token.secret")).getBytes();
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
 

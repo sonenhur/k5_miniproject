@@ -3,7 +3,6 @@ package miniproject.stellanex.service;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import miniproject.stellanex.domain.Member;
-import miniproject.stellanex.dto.MemberInfoRequest;
 import miniproject.stellanex.dto.MemberInfoResponse;
 import miniproject.stellanex.exception.AppException;
 import miniproject.stellanex.exception.ErrorCode;
@@ -62,12 +61,6 @@ public class MemberService {
             throw new UsernameNotFoundException("해당하는 회원이 존재하지 않습니다.");
         }
         return new MemberInfoResponse(member.getEmail(), member.getName());
-    }
-
-    @Transactional
-    public void deleteInfo(String email) {
-        Member member = findMemberByEmail(email);
-        memberRepository.delete(member);
     }
 
     private Member createMember(String email, String password, String name, String birth) {

@@ -15,8 +15,4 @@ public class ReviewRequest {
     private String date;
     private String writer;
 
-    public Long getMovieId() {
-        return movie_id;
-    }
-
 }
