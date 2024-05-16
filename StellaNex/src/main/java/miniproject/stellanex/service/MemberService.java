@@ -92,6 +92,7 @@ public class MemberService {
     }
 
     public void deleteMemberByEmail(String email) {
-        memberRepository.deleteByEmail(email);
+    	memberRepository.softDeleteByEmail(email);
     }
+
 }
